@@ -1,0 +1,520 @@
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для тебя ❤️</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #ffd6e7, #ffeaf3);
+            transition: background 1s ease;
+        }
+
+        .page {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            width: min(90%, 700px);
+            text-align: center;
+            padding: 30px;
+        }
+
+        .text {
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #ffffff;
+            font-size: clamp(28px, 5vw, 52px);
+            font-weight: 700;
+            line-height: 1.2;
+
+            text-shadow:
+                0 3px 10px rgba(180, 40, 90, 0.35);
+
+            opacity: 1;
+            transform: translateY(0) scale(1);
+
+            transition:
+                opacity 0.35s ease,
+                transform 0.35s ease;
+        }
+
+        .text.hide {
+            opacity: 0;
+            transform: translateY(15px) scale(0.95);
+        }
+
+        .button {
+            margin-top: 40px;
+            border: none;
+            outline: none;
+
+            padding: 18px 42px;
+
+            border-radius: 999px;
+
+            background: #ffffff;
+            color: #e84378;
+
+            font-size: 20px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 30px rgba(190, 50, 100, 0.25);
+
+            transition:
+                transform 0.15s ease,
+                box-shadow 0.15s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-3px) scale(1.03);
+
+            box-shadow:
+                0 15px 35px rgba(190, 50, 100, 0.35);
+        }
+
+        .button:active {
+            transform: scale(0.94);
+        }
+
+        /* Сердечки */
+        .heart {
+            position: absolute;
+            left: 0;
+            top: 0;
+
+            pointer-events: none;
+
+            font-size: 25px;
+
+            animation: heartFly 2s ease-out forwards;
+
+            z-index: 5;
+        }
+
+        @keyframes heartFly {
+            0% {
+                opacity: 1;
+                transform:
+                    translate(-50%, -50%)
+                    scale(0.4)
+                    rotate(0deg);
+            }
+
+            30% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform:
+                    translate(
+                        calc(-50% + var(--x)),
+                        calc(-50% + var(--y))
+                    )
+                    scale(var(--scale))
+                    rotate(var(--rotate));
+            }
+        }
+
+        /* Маленькие плавающие сердечки на фоне */
+        .background-heart {
+            position: absolute;
+            bottom: -50px;
+
+            pointer-events: none;
+
+            opacity: 0.25;
+
+            animation: floatUp linear forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform:
+                    translateY(0)
+                    rotate(0deg);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 0.25;
+            }
+
+            85% {
+                opacity: 0.2;
+            }
+
+            100% {
+                transform:
+                    translateY(-110vh)
+                    rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Небольшая вспышка при нажатии */
+        .flash {
+            position: absolute;
+
+            width: 20px;
+            height: 20px;
+
+            border-radius: 50%;
+
+            background: rgba(255, 255, 255, 0.8);
+
+            pointer-events: none;
+
+            transform: translate(-50%, -50%) scale(0);
+
+            animation: flash 0.6s ease-out forwards;
+
+            z-index: 4;
+        }
+
+        @keyframes flash {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(12);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .content {
+                padding: 20px;
+            }
+
+            .text {
+                min-height: 120px;
+            }
+
+            .button {
+                margin-top: 25px;
+                padding: 16px 32px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page" id="page">
+
+    <div class="content">
+
+        <div class="text" id="text">
+            Привет ❤️
+        </div>
+
+        <button class="button" id="button">
+            Нажми сюда 💕
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+
+    const texts = [
+        "Привет, солнышко ❤️",
+        "В общем пусть мы и не давно знакомы",
+        "Ты стала чем-то особенным для меня",
+        "Ты есть в каждом дне и я очень рад этому❤️",
+        "Я очень рад что ты делишься всем со мной❤️",
+        "Ты очень сильная красивая и умная девочка",
+        "Я рад что среди всех встретил именно тебя",
+	"Ты моя первая и последняя мысль утром и перед сном❤️",
+	"Каждая твоя победа греет душу",
+	"А каждое плохое настроение заставляет грустить и меня",
+	"Ты большая умничка и я хочу что бы ты знала что я тобой горжусь❤️",
+	"Как бы не было плохо или тяжело я всегда буду стараться поддержать и быть рядом❤️",
+        "Я люблю тебя 💗"
+    ];
+
+
+    /*
+    ============================================================
+    НИЖЕ НИЧЕГО МЕНЯТЬ НЕ НУЖНО
+    ============================================================
+    */
+
+    const textElement = document.getElementById("text");
+    const button = document.getElementById("button");
+    const page = document.getElementById("page");
+
+    let currentText = 0;
+
+
+    // Показываем новый текст
+    function showNextText() {
+
+        // Если тексты закончились — начинаем сначала
+        currentText++;
+
+        if (currentText >= texts.length) {
+            currentText = 0;
+        }
+
+        // Плавно скрываем старый текст
+        textElement.classList.add("hide");
+
+        setTimeout(() => {
+
+            textElement.textContent = texts[currentText];
+
+            // Показываем новый
+            textElement.classList.remove("hide");
+
+        }, 350);
+    }
+
+
+    // Создание сердечка
+    function createHeart(x, y) {
+
+        const heart = document.createElement("div");
+
+        heart.className = "heart";
+
+        // Разные варианты сердечек
+        const hearts = [
+            "❤️",
+            "💕",
+            "💗",
+            "💖",
+            "💓",
+            "💘"
+        ];
+
+        heart.textContent =
+            hearts[Math.floor(Math.random() * hearts.length)];
+
+
+        // Размер
+        const scale =
+            0.7 + Math.random() * 1.2;
+
+        // Направление полёта
+        const moveX =
+            (Math.random() - 0.5) * 350;
+
+        const moveY =
+            -(100 + Math.random() * 300);
+
+        const rotate =
+            (Math.random() - 0.5) * 90;
+
+
+        heart.style.left = x + "px";
+        heart.style.top = y + "px";
+
+        heart.style.setProperty(
+            "--x",
+            moveX + "px"
+        );
+
+        heart.style.setProperty(
+            "--y",
+            moveY + "px"
+        );
+
+        heart.style.setProperty(
+            "--scale",
+            scale
+        );
+
+        heart.style.setProperty(
+            "--rotate",
+            rotate + "deg"
+        );
+
+
+        // Немного разные размеры
+        heart.style.fontSize =
+            (20 + Math.random() * 25) + "px";
+
+
+        page.appendChild(heart);
+
+
+        // Удаляем после анимации
+        setTimeout(() => {
+            heart.remove();
+        }, 2100);
+    }
+
+
+    // Создаём много сердечек
+    function createHeartExplosion(x, y) {
+
+        const amount = 25;
+
+        for (let i = 0; i < amount; i++) {
+
+            // Небольшая задержка делает эффект живее
+            setTimeout(() => {
+
+                createHeart(
+                    x + (Math.random() - 0.5) * 40,
+                    y + (Math.random() - 0.5) * 30
+                );
+
+            }, i * 15);
+        }
+    }
+
+
+    // Вспышка
+    function createFlash(x, y) {
+
+        const flash = document.createElement("div");
+
+        flash.className = "flash";
+
+        flash.style.left = x + "px";
+        flash.style.top = y + "px";
+
+        page.appendChild(flash);
+
+        setTimeout(() => {
+            flash.remove();
+        }, 700);
+    }
+
+
+    // Меняем фон
+    function changeBackground() {
+
+        const backgrounds = [
+            "linear-gradient(135deg, #ffd6e7, #ffeaf3)",
+            "linear-gradient(135deg, #ffb6d5, #ffd1e5)",
+            "linear-gradient(135deg, #ff9fc8, #ffc4dd)",
+            "linear-gradient(135deg, #ff8fbd, #ffb5d3)",
+            "linear-gradient(135deg, #ff78ae, #ffa8cb)",
+            "linear-gradient(135deg, #ff6ba5, #ff9bc3)"
+        ];
+
+        const index =
+            Math.min(currentText, backgrounds.length - 1);
+
+        document.body.style.background =
+            backgrounds[index];
+    }
+
+
+    // Нажатие на кнопку
+    button.addEventListener("click", function(event) {
+
+        const rect = page.getBoundingClientRect();
+
+        const x =
+            event.clientX - rect.left;
+
+        const y =
+            event.clientY - rect.top;
+
+
+        // Сердечки
+        createHeartExplosion(x, y);
+
+        // Вспышка
+        createFlash(x, y);
+
+        // Новый текст
+        showNextText();
+
+        // Новый фон
+        changeBackground();
+
+    });
+
+
+    
+    function createBackgroundHeart() {
+
+        const heart =
+            document.createElement("div");
+
+        heart.className =
+            "background-heart";
+
+        const hearts = [
+            "♡",
+            "♥",
+            "❤",
+            "💕"
+        ];
+
+        heart.textContent =
+            hearts[Math.floor(Math.random() * hearts.length)];
+
+        heart.style.left =
+            Math.random() * 100 + "%";
+
+        heart.style.fontSize =
+            (15 + Math.random() * 30) + "px";
+
+        const duration =
+            7 + Math.random() * 8;
+
+        heart.style.animationDuration =
+            duration + "s";
+
+        page.appendChild(heart);
+
+        setTimeout(() => {
+            heart.remove();
+        }, duration * 1000);
+    }
+
+
+ 
+    setInterval(
+        createBackgroundHeart,
+        700
+    );
+
+</script>
+
+</body>
+</html>
+```
